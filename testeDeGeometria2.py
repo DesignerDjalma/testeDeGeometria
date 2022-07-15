@@ -113,7 +113,7 @@ class Geometria:
         cursor.insertRow([ponto])
 
 
-    def testeGeral(self):
+    def plotar(self, longEX, latNY):
                 
         referencia_espacial = ReferenciaEspacial.get(Projecao.GCS_SIRGAS_2000)
         tipo_de_geometria = TipoDeGeometria.ponto 
@@ -122,7 +122,9 @@ class Geometria:
 
         self.setValoresGeometria(referencia_espacial, tipo_de_geometria, diretorio_saida, nome_saida)
         self.criarGeometriaVazia()
-        self.plotarCoordenadas(r"C:\Users\djalma.filho\repositorios\plotagem-de-pontos-ocorrencia\outputShapes\novo_automatico.shp", -2.279, -48.288)
+        x = longEX
+        y = latNY
+        self.plotarCoordenadas(os.path.join(diretorio_saida, nome_saida), x, y)
 
 
 

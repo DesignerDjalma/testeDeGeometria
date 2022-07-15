@@ -1,6 +1,20 @@
 import arcpy
 
 
+
+def escolherNome(nome_arquivo):
+    nome_arquivo = nome_arquivo[:-4] + '_1'
+    contador = 2
+    while True:
+        if os.path.exists(nome_arquivo):
+            nome_arquivo = nome_arquivo.split('_')[0] + "_" + str(contador)
+            contador += 1
+            continue
+        else:
+            nome_saida = nome_arquivo + '.shp'
+            return nome_saida
+
+
 class Projecao:
     """Retorna o EPSG da Projecao"""
 
@@ -64,6 +78,8 @@ class Geometria:
         self.nome_saida = nome_saida
 
     def criarGeometriaVazia(self):
+        """Cria um Shape vazio para inserção de pontos."""
+
         arcpy.CreateFeatureclass_management(
             spatial_reference=self.referencia_espacial,
             out_path=self.diretorio_saida,
@@ -81,6 +97,7 @@ class Geometria:
         """
         
         # Fique "long" de "eX"
+        self.shape = shape
         valores = latitude, longitude
 
         for val in valores:
@@ -94,5 +111,23 @@ class Geometria:
         cursor = arcpy.da.InsertCursor(shape, ["SHAPE@"])
         cursor.insertRow([ponto])
 
-    
 
+    def testeGeral(self):
+                
+        referencia_espacial = ReferenciaEspacial.get(Projecao.GCS_SIRGAS_2000)
+        tipo_de_geometria = TipoDeGeometria.ponto 
+        diretorio_saida = r'C:\Users\djalma.filho\repositorios\plotagem-de-pontos-ocorrencia\outputShapes'
+        nome_saida = escolherNome('ocorrencia')
+
+        self.setValoresGeometria(referencia_espacial, tipo_de_geometria, diretorio_saida, nome_saida)
+        self.criarGeometriaVazia()
+        self.plotarCoordenadas(r"C:\Users\djalma.filho\repositorios\plotagem-de-pontos-ocorrencia\outputShapes\novo_automatico.shp", -2.279, -48.288)
+
+
+
+
+
+import os
+
+
+            

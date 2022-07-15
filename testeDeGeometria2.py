@@ -1,5 +1,6 @@
 import arcpy
 
+import os
 
 
 def escolherNome(nome_arquivo):
@@ -127,7 +128,6 @@ class Geometria:
 
 
 
-import os
 
 
             

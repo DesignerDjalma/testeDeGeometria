@@ -5,27 +5,43 @@ import os
 import getpass
 
 
-def escolherNome(nome_arquivo):
-    print(r'Nome do arquivo: {}'.format(nome_arquivo))
-    nome_arquivo = nome_arquivo[:] + '_1'
-    print(r'Nome do arquivo: {}'.format(nome_arquivo))
-    contador = 2
-    print(r'contador: {}'.format(contador))
+contador_ocorrencias = 0
 
-    while os.path.exists(nome_arquivo + '.shp'):
-        nome_arquivo = nome_arquivo.split('_')[0] + "_" + str(contador)
-        contador += 1
-        print(r'Novo nome do arquivo: {} -> {}'.format(nome_arquivo, contador))
-        
-    print(r'nome final: {}'.format(nome_arquivo + '.shp'))
-    return nome_arquivo + '.shp'
+# Funciona Solo
+def criarGeometriaVazia(_referencia_espacial,_tipo_de_geometria,_diretorio_saida,_nome_saida):
+    """Cria um Shape vazio para inserção de pontos."""
+
+    arcpy.CreateFeatureclass_management(
+        spatial_reference=_referencia_espacial,
+        geometry_type=_tipo_de_geometria,
+        out_path=_diretorio_saida,
+        out_name=_nome_saida,
+        )
+
+def verificaExistenciaArquivo(caminho_completo_shapefile):
+    global contador_ocorrencias
+    contador_ocorrencias += 1
+    caminho_completo_shapefile = "{}__{}.shp".format(caminho_completo_shapefile, str(contador_ocorrencias))
+
+    while True:
+        if not os.path.exists(caminho_completo_shapefile):
+            print("Caminho nao existe: {}".format(caminho_completo_shapefile))
+            return caminho_completo_shapefile
+        else:
+            print("Caminho ja Existe: {}".format(caminho_completo_shapefile))
+            contador_ocorrencias += 1
+            caminho_completo_shapefile = caminho_completo_shapefile.split('__')[0]
+            caminho_completo_shapefile = "{}__{}.shp".format(caminho_completo_shapefile, str(contador_ocorrencias))
+            continue
+
+
 
 
 
 class Dados:
-    diretorio_saida = r'C:\Users\{}\repositorios\plotagem-de-pontos-ocorrencia\outputShapes'.format(getpass.getuser())
+    diretorio_saida = 'C:\\Users\\djalma.filho\\ocorrencias'
     msg_erro = ("Erro no valor. Valor númerico não fornecido. ",
-                "Valor Recebido: {0}. ",
+                "Valor Recebido: {0}. ",    
                 "Tipo de Valor: {1}. ",)
 
 
@@ -91,15 +107,6 @@ class Geometria:
         self.diretorio_saida = diretorio_saida
         self.nome_saida = nome_saida
 
-    def criarGeometriaVazia(self):
-        """Cria um Shape vazio para inserção de pontos."""
-
-        arcpy.CreateFeatureclass_management(
-            spatial_reference=self.referencia_espacial,
-            out_path=self.diretorio_saida,
-            out_name=self.nome_saida,
-            geometry_type=self.tipo_de_geometria,
-            )
 
     def plotarCoordenadas(self, shape, latitude, longitude):
         """Plota um ponto dentro do shape
@@ -130,22 +137,26 @@ class Geometria:
         y = latNY
 
         referencia_espacial = ReferenciaEspacial.get(Projecao.GCS_SIRGAS_2000)
-        tipo_geometria = TipoDeGeometria.ponto 
-        path_ocorrencia = Dados.diretorio_saida
-        palsta_caldeirao = os.path.join(Dados.diretorio_saida, 'ocorrencia')
-        nome_saida = escolherNome(
-            '\\'.join( pasta_completa.split[:-1]
-            )
-        )
+        tipo_de_geometria = TipoDeGeometria.ponto 
+        diretorio_saida = Dados.diretorio_saida
+        nome_saida = 'ocorrencia'
 
-        print("Variaveis:\n{}\n{}\n{}\n{}".format(referencia_espacial, tipo_geometria, path_ocorrencia, nome_saida))
-        
-        self.setValoresGeometria(referencia_espacial, tipo_geometria, Dados.diretorio_saida, nome_saida)
-        self.criarGeometriaVazia()
-        self.plotarCoordenadas(os.path.join(Dados.diretorio_saida, nome_saida), x, y)
+        real_nome_saida = verificaExistenciaArquivo(os.path.join(diretorio_saida, nome_saida))
+        real_nome_saida_rec = real_nome_saida.split('\\')[-1]
+        print("real_nome_saida", real_nome_saida)
+        # self.setValoresGeometria(referencia_espacial, tipo_de_geometria, diretorio_saida, real_nome_saida)
+        criarGeometriaVazia(referencia_espacial, tipo_de_geometria, diretorio_saida, real_nome_saida_rec)
+        self.plotarCoordenadas(real_nome_saida, y, x)
+    
+
+
+
+
     
    
-  
+string_com_comando = str("string aqui")
+nova_string_com_comando = string_com_comando.replace('\\','/')
+os.system(nova_string_com_comando)
  
 
 

@@ -1,6 +1,8 @@
-import arcpy
 
+
+import arcpy
 import os
+import getpass
 
 
 def escolherNome(nome_arquivo):
@@ -16,11 +18,19 @@ def escolherNome(nome_arquivo):
             return nome_saida
 
 
-class Projecao:
-    """Retorna o EPSG da Projecao"""
 
-    GCS_SIRGAS_2000 = 4674
+class Dados:
+    diretorio_saida = r'C:\Users\{}\repositorios\plotagem-de-pontos-ocorrencia\outputShapes'.format(getpass.getuser())
+    msg_erro = ("Erro no valor. Valor númerico não fornecido. ",
+                "Valor Recebido: {0}. ",
+                "Tipo de Valor: {1}. ",)
+
+
+class Projecao:
+    """Retorna o EPSG da Projeção"""
+
     GCS_SIRGAS = 4170
+    GCS_SIRGAS_2000 = 4674
     GCS_WGS_1984 = 4326
     GCS_SAD_1969_96 = 5527
     SAD_1969_UTM_Zone_21S = 29191
@@ -103,9 +113,7 @@ class Geometria:
 
         for val in valores:
             assert ( isinstance(val, float) or isinstance(val, int)
-                ),''.join(("Erro no valor. Valor númerico não fornecido. ",
-                            "Valor Recebido: {0}. ",
-                            "Tipo de Valor: {1}. ",)).format(val, type(val))
+                ),''.join(Dados.msg_erro_01).format(val, type(val))
 
         # longitude = X , latitude = Y
         ponto = arcpy.Point(longitude, latitude)
@@ -115,21 +123,19 @@ class Geometria:
 
     def plotar(self, longEX, latNY):
                 
-        referencia_espacial = ReferenciaEspacial.get(Projecao.GCS_SIRGAS_2000)
-        tipo_de_geometria = TipoDeGeometria.ponto 
-        diretorio_saida = r'C:\Users\djalma.filho\repositorios\plotagem-de-pontos-ocorrencia\outputShapes'
-        nome_saida = escolherNome('ocorrencia')
-
-        self.setValoresGeometria(referencia_espacial, tipo_de_geometria, diretorio_saida, nome_saida)
-        self.criarGeometriaVazia()
         x = longEX
         y = latNY
-        self.plotarCoordenadas(os.path.join(diretorio_saida, nome_saida), x, y)
+        referencia_espacial = ReferenciaEspacial.get(Projecao.GCS_SIRGAS_2000)
+        tipo_de_geometria = TipoDeGeometria.ponto 
+        nome_saida = escolherNome('ocorrencia')
+        
+        self.setValoresGeometria(referencia_espacial, tipo_de_geometria, Dados.diretorio_saida, nome_saida)
+        self.criarGeometriaVazia()
+        self.plotarCoordenadas(os.path.join(Dados.diretorio_saida, nome_saida), x, y)
+    
+   
+  
+ 
 
 
 
-
-
-
-
-            

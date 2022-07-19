@@ -6,16 +6,19 @@ import getpass
 
 
 def escolherNome(nome_arquivo):
-    nome_arquivo = nome_arquivo[:-4] + '_1'
+    print(r'Nome do arquivo: {}'.format(nome_arquivo))
+    nome_arquivo = nome_arquivo[:] + '_1'
+    print(r'Nome do arquivo: {}'.format(nome_arquivo))
     contador = 2
-    while True:
-        if os.path.exists(nome_arquivo):
-            nome_arquivo = nome_arquivo.split('_')[0] + "_" + str(contador)
-            contador += 1
-            continue
-        else:
-            nome_saida = nome_arquivo + '.shp'
-            return nome_saida
+    print(r'contador: {}'.format(contador))
+
+    while os.path.exists(nome_arquivo + '.shp'):
+        nome_arquivo = nome_arquivo.split('_')[0] + "_" + str(contador)
+        contador += 1
+        print(r'Novo nome do arquivo: {} -> {}'.format(nome_arquivo, contador))
+        
+    print(r'nome final: {}'.format(nome_arquivo + '.shp'))
+    return nome_arquivo + '.shp'
 
 
 
@@ -125,11 +128,19 @@ class Geometria:
                 
         x = longEX
         y = latNY
+
         referencia_espacial = ReferenciaEspacial.get(Projecao.GCS_SIRGAS_2000)
-        tipo_de_geometria = TipoDeGeometria.ponto 
-        nome_saida = escolherNome('ocorrencia')
+        tipo_geometria = TipoDeGeometria.ponto 
+        path_ocorrencia = Dados.diretorio_saida
+        palsta_caldeirao = os.path.join(Dados.diretorio_saida, 'ocorrencia')
+        nome_saida = escolherNome(
+            '\\'.join( pasta_completa.split[:-1]
+            )
+        )
+
+        print("Variaveis:\n{}\n{}\n{}\n{}".format(referencia_espacial, tipo_geometria, path_ocorrencia, nome_saida))
         
-        self.setValoresGeometria(referencia_espacial, tipo_de_geometria, Dados.diretorio_saida, nome_saida)
+        self.setValoresGeometria(referencia_espacial, tipo_geometria, Dados.diretorio_saida, nome_saida)
         self.criarGeometriaVazia()
         self.plotarCoordenadas(os.path.join(Dados.diretorio_saida, nome_saida), x, y)
     

@@ -160,11 +160,96 @@ class Geometria:
         criarGeometriaVazia(referencia_espacial, tipo_de_geometria, diretorio_saida, real_nome_saida_rec)
         self.plotarCoordenadas(real_nome_saida, y, x)
     
+    def plotarXY(self, longEX, latNY):
+                
+        x = longEX
+        y = latNY
+
+        referencia_espacial = ReferenciaEspacial.get(Projecao.GCS_SIRGAS_2000)
+        tipo_de_geometria = TipoDeGeometria.ponto 
+        diretorio_saida = Dados.diretorio_saida
+        nome_saida = 'ocorrencia'
+
+        verificaExistenciaDePasta(diretorio_saida)
+        real_nome_saida = verificaExistenciaArquivo(os.path.join(diretorio_saida, nome_saida))
+        real_nome_saida_rec = real_nome_saida.split('\\')[-1]
+        print("real_nome_saida", real_nome_saida)
+        # self.setValoresGeometria(referencia_espacial, tipo_de_geometria, diretorio_saida, real_nome_saida)
+        criarGeometriaVazia(referencia_espacial, tipo_de_geometria, diretorio_saida, real_nome_saida_rec)
+        self.plotarCoordenadas(real_nome_saida, y, x)
+    
+    def plotarYX(self, latNY, longEX):
+                
+        x = longEX
+        y = latNY
+
+        referencia_espacial = ReferenciaEspacial.get(Projecao.GCS_SIRGAS_2000)
+        tipo_de_geometria = TipoDeGeometria.ponto 
+        diretorio_saida = Dados.diretorio_saida
+        nome_saida = 'ocorrencia'
+
+        verificaExistenciaDePasta(diretorio_saida)
+        real_nome_saida = verificaExistenciaArquivo(os.path.join(diretorio_saida, nome_saida))
+        real_nome_saida_rec = real_nome_saida.split('\\')[-1]
+        print("real_nome_saida", real_nome_saida)
+        # self.setValoresGeometria(referencia_espacial, tipo_de_geometria, diretorio_saida, real_nome_saida)
+        criarGeometriaVazia(referencia_espacial, tipo_de_geometria, diretorio_saida, real_nome_saida_rec)
+        self.plotarCoordenadas(real_nome_saida, y, x)
+    
+
+
+def calcularCoordenadas(camada_a_se_calcular):
+    arcpy.management.CalculateGeometryAttributes()
+
+# copiar shapes
+def copiar_shapes(camada_a_ser_copiada, camada_alvo):
+    camada_a_ser_copiada = camada_por_nome(camada_a_ser_copiada)
+    camada_alvo = camada_por_nome(camada_alvo)
+
+    camada_alvo = arcpy.da.InsertCursor(camada_alvo, ["SHAPE@"])
+    with arcpy.da.SearchCursor(camada_a_ser_copiada, ["SHAPE@"]) as cursor:
+        for shape in cursor:
+            camada_alvo.insertRow(shape)  
+    arcpy.RefreshActiveView()
 
 
 
+def camada_por_nome(nome_da_camada):
+    mxd = arcpy.mapping.MapDocument("current")
+    cmds = arcpy.mapping.ListLayers(mxd)
+    cmds_nome = {i.name:i for i in cmds}
+    return cmds_nome[nome_da_camada]
 
     
+
+
+def adiciona_multipontos(lista_de_pontos_quadro, shape_a_adicionar):
+    """Pega a lista que é gerada do quadro e tranforma em multipontos"""
+    # A list of features and coordinate pairs
+    feature_info = [
+        [ [1, 2], [2, 4], [3, 7] ],  # lista de pontos = 1 feature
+        [ [6, 8], [5, 7], [7, 2], [9, 5] ], # lista de pontos = 1 feature
+        ] # a lista maior # 
+
+    # A list that will hold each of the Multipoint objects
+    features = []
+
+    for feature in feature_info:
+        # Create a Multipoint object based on the array of points
+        # Append to the list of Multipoint objects
+        features.append(
+            arcpy.Multipoint(
+                arcpy.Array([arcpy.Point(*coords) for coords in feature])))
+
+    # Persist a copy of the Multipoint objects using CopyFeatures
+    arcpy.CopyFeatures_management(features, "c:/geometry/multipoints.shp")
+
+
+
+
+
+
+
    
 string_com_comando = str("string aqui")
 nova_string_com_comando = string_com_comando.replace('\\','/')

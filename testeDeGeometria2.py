@@ -7,6 +7,7 @@ import getpass
 
 contador_ocorrencias = 0
 
+
 # Funciona Solo
 def criarGeometriaVazia(_referencia_espacial,_tipo_de_geometria,_diretorio_saida,_nome_saida):
     """Cria um Shape vazio para inserção de pontos."""
@@ -201,23 +202,34 @@ class Geometria:
 def calcularCoordenadas(camada_a_se_calcular):
     arcpy.management.CalculateGeometryAttributes()
 
+
 # copiar shapes
 def copiar_shapes(camada_a_ser_copiada, camada_alvo):
+    """Copia um shape e cola dentro do outro."""
+
     camada_a_ser_copiada = camada_por_nome(camada_a_ser_copiada)
     camada_alvo = camada_por_nome(camada_alvo)
-
     camada_alvo = arcpy.da.InsertCursor(camada_alvo, ["SHAPE@"])
+
     with arcpy.da.SearchCursor(camada_a_ser_copiada, ["SHAPE@"]) as cursor:
         for shape in cursor:
             camada_alvo.insertRow(shape)  
+
     arcpy.RefreshActiveView()
 
 
 
 def camada_por_nome(nome_da_camada):
     mxd = arcpy.mapping.MapDocument("current")
-    cmds = arcpy.mapping.ListLayers(mxd)
-    cmds_nome = {i.name:i for i in cmds}
+    cmds = arcpy.mapping.ListLayers(mxd) # cmds = camadas
+
+    # cmds_nome = {} # dicionario vazio, iniciando loop com for
+    # for i in cmds:
+    #     cmds_nome[i.name] = i
+    #     # i.name retorna nome da camada (string)
+    #     # i é a propria camada (objeto)
+
+    cmds_nome = { i.name:i for i in cmds } # mesma coisa do que o de cima, mas em uma linha dict comprehension ;)
     return cmds_nome[nome_da_camada]
 
     
@@ -225,24 +237,39 @@ def camada_por_nome(nome_da_camada):
 
 def adiciona_multipontos(lista_de_pontos_quadro, shape_a_adicionar):
     """Pega a lista que é gerada do quadro e tranforma em multipontos"""
+
     # A list of features and coordinate pairs
-    feature_info = [
-        [ [1, 2], [2, 4], [3, 7] ],  # lista de pontos = 1 feature
-        [ [6, 8], [5, 7], [7, 2], [9, 5] ], # lista de pontos = 1 feature
-        ] # a lista maior # 
+    # feature_info = [
+    #     [ [1, 2], [2, 4], [3, 7] ],  # lista de pontos = 1 feature
+    #     [ [6, 8], [5, 7], [7, 2], [9, 5] ], # lista de pontos = 1 feature
+    #     ] # a lista maior # 
+
+    ldc = lista_de_pontos_quadro
+    l_ldc = ldc.split(';')
+    l_l_ldc = [ i.split(' ')[1:] for i in l_ldc ]
+
+    for j in range(2):
+        for i in range(len(l_l_ldc)):
+            l_l_ldc[i][j] = float(l_l_ldc[i][j])
 
     # A list that will hold each of the Multipoint objects
-    features = []
+    features_multipontos = []
 
-    for feature in feature_info:
+    for feature in l_l_ldc:
         # Create a Multipoint object based on the array of points
         # Append to the list of Multipoint objects
-        features.append(
+        features_multipontos.append(
             arcpy.Multipoint(
-                arcpy.Array([arcpy.Point(*coords) for coords in feature])))
+                arcpy.Array(
+                    [ arcpy.Point(*coords) for coords in feature ]
+                )
+            )
+        )
+    cursor = arcpy.da.InsertCursor(shape_a_adicionar, ["SHAPE@"])
+    cursor.insertRow([features_multipontos])
+    
 
-    # Persist a copy of the Multipoint objects using CopyFeatures
-    arcpy.CopyFeatures_management(features, "c:/geometry/multipoints.shp")
+
 
 
 

@@ -18,6 +18,17 @@ def criarGeometriaVazia(_referencia_espacial,_tipo_de_geometria,_diretorio_saida
         out_name=_nome_saida,
         )
 
+
+def verificaExistenciaDePasta(caminho_da_pasta):
+    """Verifica se a pasta foi criada, se não ele cria."""
+    if not os.path.exists(caminho_da_pasta):
+        os.mkdir(caminho_da_pasta)
+    else:
+        pass
+
+
+
+
 def verificaExistenciaArquivo(caminho_completo_shapefile):
     global contador_ocorrencias
     contador_ocorrencias += 1
@@ -39,7 +50,7 @@ def verificaExistenciaArquivo(caminho_completo_shapefile):
 
 
 class Dados:
-    diretorio_saida = 'C:\\Users\\djalma.filho\\ocorrencias'
+    diretorio_saida = 'C:\\Users\\{}\\ocorrencias'.format(getpass.getuser())
     msg_erro = ("Erro no valor. Valor númerico não fornecido. ",
                 "Valor Recebido: {0}. ",    
                 "Tipo de Valor: {1}. ",)
@@ -141,6 +152,7 @@ class Geometria:
         diretorio_saida = Dados.diretorio_saida
         nome_saida = 'ocorrencia'
 
+        verificaExistenciaDePasta(diretorio_saida)
         real_nome_saida = verificaExistenciaArquivo(os.path.join(diretorio_saida, nome_saida))
         real_nome_saida_rec = real_nome_saida.split('\\')[-1]
         print("real_nome_saida", real_nome_saida)

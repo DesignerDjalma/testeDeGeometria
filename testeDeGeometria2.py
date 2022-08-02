@@ -179,13 +179,13 @@ class Geometria:
         criarGeometriaVazia(referencia_espacial, tipo_de_geometria, diretorio_saida, real_nome_saida_rec)
         self.plotarCoordenadas(real_nome_saida, y, x)
     
-    def plotarYX(self, latNY, longEX):
+    def plotarYX(self, latNY, longEX, projecao):
                 
         x = longEX
         y = latNY
 
-        referencia_espacial = ReferenciaEspacial.get(Projecao.GCS_SIRGAS_2000)
-        tipo_de_geometria = TipoDeGeometria.ponto 
+        referencia_espacial = ReferenciaEspacial.get(projecao) 
+        tipo_de_geometria = TipoDeGeometria.ponto  
         diretorio_saida = Dados.diretorio_saida
         nome_saida = 'ocorrencia'
 
@@ -244,6 +244,7 @@ def adiciona_multipontos(lista_de_pontos_quadro, shape_a_adicionar):
     #     [ [6, 8], [5, 7], [7, 2], [9, 5] ], # lista de pontos = 1 feature
     #     ] # a lista maior # 
 
+    # primeiro formata os pontos para o formato adequado
     ldc = lista_de_pontos_quadro
     l_ldc = ldc.split(';')
     l_l_ldc = [ i.split(' ')[1:] for i in l_ldc ]
@@ -255,7 +256,8 @@ def adiciona_multipontos(lista_de_pontos_quadro, shape_a_adicionar):
     # A list that will hold each of the Multipoint objects
     features_multipontos = []
 
-    for feature in l_l_ldc:
+    # bug correction
+    for feature in [l_l_ldc]:
         # Create a Multipoint object based on the array of points
         # Append to the list of Multipoint objects
         features_multipontos.append(
@@ -267,6 +269,10 @@ def adiciona_multipontos(lista_de_pontos_quadro, shape_a_adicionar):
         )
     cursor = arcpy.da.InsertCursor(shape_a_adicionar, ["SHAPE@"])
     cursor.insertRow([features_multipontos])
+    print("features_multipontos")
+    print(features_multipontos)
+    print("l_l_ldc")
+    print(l_l_ldc)
     
 
 
@@ -285,3 +291,6 @@ os.system(nova_string_com_comando)
 
 
 
+# if __name__ == "__main__":
+#     g = Geometria()
+#     g.plotarYX(-4.123,-44.123, Projecao.GCS_SIRGAS_2000)

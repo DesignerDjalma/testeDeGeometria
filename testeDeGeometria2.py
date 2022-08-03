@@ -32,7 +32,6 @@ def verificaExistenciaDePasta(caminho_da_pasta):
 
 def verificaExistenciaArquivo(caminho_completo_shapefile):
     global contador_ocorrencias
-    contador_ocorrencias += 1
     caminho_completo_shapefile = "{}__{}.shp".format(caminho_completo_shapefile, str(contador_ocorrencias))
 
     while True:
@@ -270,8 +269,9 @@ def adiciona_multipontos(lista_de_pontos_quadro, shape_a_adicionar):
     cursor = arcpy.da.InsertCursor(shape_a_adicionar, ["SHAPE@"])
     cursor.insertRow([features_multipontos])
 
-    cursor = arcpy.da.InsertCursor(shape, ["SHAPE@"])
-    cursor.insertRow([ponto])
+    # cursor = arcpy.da.InsertCursor(shape, ["SHAPE@"])
+    # cursor.insertRow([ponto])
+
     print("features_multipontos")
     print(features_multipontos)
     print("l_l_ldc")

@@ -233,7 +233,7 @@ def camada_por_nome(nome_da_camada):
 
     
 
-
+# looks like its working
 def adiciona_multipontos(lista_de_pontos_quadro, shape_a_adicionar):
     """Pega a lista que é gerada do quadro e tranforma em multipontos"""
 
@@ -258,7 +258,7 @@ def adiciona_multipontos(lista_de_pontos_quadro, shape_a_adicionar):
     # bug correction
     for feature in [l_l_ldc]:
         # Create a Multipoint object based on the array of points
-        # Append to the list of Multipoint objects
+        # Append to theS list of Multipoint objects
         features_multipontos.append(
             arcpy.Multipoint(
                 arcpy.Array(
@@ -267,18 +267,9 @@ def adiciona_multipontos(lista_de_pontos_quadro, shape_a_adicionar):
             )
         )
     cursor = arcpy.da.InsertCursor(shape_a_adicionar, ["SHAPE@"])
-    cursor.insertRow([features_multipontos])
+    cursor.insertRow(features_multipontos)
 
-    # cursor = arcpy.da.InsertCursor(shape, ["SHAPE@"])
-    # cursor.insertRow([ponto])
-<<<<<<< HEAD
 
-=======
->>>>>>> 5a3061040778303c0d095df40ef221d5bb134d75
-    print("features_multipontos")
-    print(features_multipontos)
-    print("l_l_ldc")
-    print(l_l_ldc)
     
 
 

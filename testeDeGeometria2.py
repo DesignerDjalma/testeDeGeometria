@@ -270,8 +270,8 @@ def adiciona_multipontos(lista_de_pontos_quadro, shape_a_adicionar):
     cursor = arcpy.da.InsertCursor(shape_a_adicionar, ["SHAPE@"])
     cursor.insertRow([features_multipontos])
 
-    cursor = arcpy.da.InsertCursor(shape, ["SHAPE@"])
-    cursor.insertRow([ponto])
+    # cursor = arcpy.da.InsertCursor(shape, ["SHAPE@"])
+    # cursor.insertRow([ponto])
     print("features_multipontos")
     print(features_multipontos)
     print("l_l_ldc")

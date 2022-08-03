@@ -234,6 +234,7 @@ def camada_por_nome(nome_da_camada):
     
 
 # looks like its working
+# 100% working
 def adiciona_multipontos(lista_de_pontos_quadro, shape_a_adicionar):
     """Pega a lista que é gerada do quadro e tranforma em multipontos"""
 
@@ -266,6 +267,8 @@ def adiciona_multipontos(lista_de_pontos_quadro, shape_a_adicionar):
                 )
             )
         )
+    # As ultimas duas linhas se referem a inserir no shape/geodatabase 
+    # as coordenadas
     cursor = arcpy.da.InsertCursor(shape_a_adicionar, ["SHAPE@"])
     cursor.insertRow(features_multipontos)
 
